@@ -1,0 +1,24 @@
+multi-language-input {
+    display: flex;
+    justify-content: center;
+    align-content: stretch;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    height: 100%;
+    width: 100%;
+}
+
+multi-language-input[data-type='textarea'] > input {
+    display: none;
+}
+
+multi-language-input[data-type='input'] > textarea {
+    display: none;
+}
+
+multi-language-input > select {
+    direction: rtl;
+    font-size: 75%;
+    opacity: 0.5;
+    line-height: 150%;
+}
