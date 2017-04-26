@@ -19,7 +19,7 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
         });
 
         function tail() {
-            if (Math.abs(xe - xs) > Math.abs(ye - ys)) {
+            if (Math.abs(xe - xs) < Math.abs(ye - ys)) {
                 if (ye - ys > tolerance) {
                     this.dispatchEvent(new CustomEvent("down", { detail: { distance: ye - ys } }));
                 }
