@@ -10,17 +10,23 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
     connectedCallback() {
         let self = this;
         self.mousedown = function(e) {
+            e.stopPropagation();
+            e.preventDefault();
             self.xs = e.screenX;
             self.ys = e.screenY;
             window.addEventListener("mousemove", self.mousemove);
         }
         self.mouseup = function(e) {
+            e.stopPropagation();
+            e.preventDefault();
             self.xe = e.screenX;
             self.ye = e.screenY;
             window.removeEventListener("mousemove", self.mousemove);
             self.tail();
         }
         self.mousemove = function(e) {
+            e.stopPropagation();
+            e.preventDefault();
             if (e.buttons <= 0) {
                 window.dispatchEvent(new Event("mouseup"));
             } else {
@@ -42,6 +48,8 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
             }
         }
         self.blur = function(e) {
+            e.stopPropagation();
+            e.preventDefault();
             window.removeEventListener("mousemove", self.mousemove);
             self.tail();
         }
