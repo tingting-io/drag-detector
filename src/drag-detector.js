@@ -11,34 +11,43 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
         window.addEventListener("mousedown", (e) => {
             xs = e.screenX;
             ys = e.screenY;
-            document.body.classList.add("drag-detector-grab");
+            window.addEventListener("mousemove", move, true);
         });
         window.addEventListener("mouseup", (e) => {
             xe = e.screenX;
             ye = e.screenY;
+            window.removeEventListener("mousemove", move);
             tail.call(this);
-            document.body.classList.remove("drag-detector-grab");
+        });
+        window.addEventListener("blur", (e) => {
+            window.removeEventListener("mousemove", move);
+            tail.call(this);
         });
 
         function move(e) {
-            if (Math.abs(e.screenX - xs) < Math.abs(e.screenY - ys)) {
-                if (e.screenY - ys > tolerance) {
-                    document.body.style.cursor = "s-resize";
-                }
-                if (ys - e.screenY > tolerance) {
-                    document.body.style.cursor = "n-resize";
-                }
+            if (e.buttons <= 0) {
+                window.dispatchEvent(new Event("mouseup"));
             } else {
-                if (e.screenX - xs > tolerance) {
-                    document.body.style.cursor = "e-resize";
-                }
-                if (xs - e.screenX > tolerance) {
-                    document.body.style.cursor = "w-resize";
+                if (Math.abs(e.screenX - xs) < Math.abs(e.screenY - ys)) {
+                    if (e.screenY - ys > tolerance) {
+                        document.body.setAttribute("data-drag-detector-effect", "down");
+                    }
+                    if (ys - e.screenY > tolerance) {
+                        document.body.setAttribute("data-drag-detector-effect", "up");
+                    }
+                } else {
+                    if (e.screenX - xs > tolerance) {
+                        document.body.setAttribute("data-drag-detector-effect", "right");
+                    }
+                    if (xs - e.screenX > tolerance) {
+                        document.body.setAttribute("data-drag-detector-effect", "left");
+                    }
                 }
             }
         }
 
         function tail() {
+            document.body.removeAttribute("data-drag-detector-effect");
             if (Math.abs(xe - xs) < Math.abs(ye - ys)) {
                 if (ye - ys > tolerance) {
                     this.dispatchEvent(new CustomEvent("down", { detail: { distance: ye - ys } }));

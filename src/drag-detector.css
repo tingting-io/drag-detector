@@ -1,24 +1,20 @@
-multi-language-input {
-    display: flex;
-    justify-content: center;
-    align-content: stretch;
-    align-items: stretch;
-    flex-wrap: nowrap;
-    height: 100%;
-    width: 100%;
-}
-
-multi-language-input[data-type='textarea'] > input {
-    display: none;
-}
-
-multi-language-input[data-type='input'] > textarea {
-    display: none;
-}
-
-multi-language-input > select {
-    direction: rtl;
-    font-size: 75%;
+[data-drag-detector-effect] {
+    transition: transform 0.2s, opacity 0.2s;
     opacity: 0.5;
-    line-height: 150%;
+}
+
+[data-drag-detector-effect="right"] {
+    transform: translateX(5vw);
+}
+
+[data-drag-detector-effect="left"] {
+    transform: translateX(-5vw);
+}
+
+[data-drag-detector-effect="up"] {
+    transform: translateY(-5vh);
+}
+
+[data-drag-detector-effect="down"] {
+    transform: translateY(5vh);
 }
