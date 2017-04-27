@@ -1,68 +1,75 @@
 window.customElements.define('drag-detector', class extends window.HTMLElement {
     constructor() {
         super();
+        this.xs = 0;
+        this.ys = 0;
+        this.xe = 0;
+        this.ye = 0;
+        this.tolerance = parseFloat(this.getAttribute("data-tolerance")) || 10;
     }
     connectedCallback() {
-        const tolerance = parseFloat(this.getAttribute("data-tolerance")) || 10;
-        let xs = 0;
-        let xe = 0;
-        let ys = 0;
-        let ye = 0;
-        window.addEventListener("mousedown", (e) => {
-            xs = e.screenX;
-            ys = e.screenY;
-            window.addEventListener("mousemove", move, true);
-        });
-        window.addEventListener("mouseup", (e) => {
-            xe = e.screenX;
-            ye = e.screenY;
-            window.removeEventListener("mousemove", move);
-            tail.call(this);
-        });
-        window.addEventListener("blur", (e) => {
-            window.removeEventListener("mousemove", move);
-            tail.call(this);
-        });
-
-        function move(e) {
+        let self = this;
+        self.mousedown = function(e) {
+            self.xs = e.screenX;
+            self.ys = e.screenY;
+            window.addEventListener("mousemove", self.mousemove);
+        }
+        self.mouseup = function(e) {
+            self.xe = e.screenX;
+            self.ye = e.screenY;
+            window.removeEventListener("mousemove", self.mousemove);
+            self.tail();
+        }
+        self.mousemove = function(e) {
             if (e.buttons <= 0) {
                 window.dispatchEvent(new Event("mouseup"));
             } else {
-                if (Math.abs(e.screenX - xs) < Math.abs(e.screenY - ys)) {
-                    if (e.screenY - ys > tolerance) {
+                if (Math.abs(e.screenX - self.xs) < Math.abs(e.screenY - self.ys)) {
+                    if (e.screenY - self.ys > self.tolerance) {
                         document.body.setAttribute("data-drag-detector-effect", "down");
                     }
-                    if (ys - e.screenY > tolerance) {
+                    if (self.ys - e.screenY > self.tolerance) {
                         document.body.setAttribute("data-drag-detector-effect", "up");
                     }
                 } else {
-                    if (e.screenX - xs > tolerance) {
+                    if (e.screenX - self.xs > self.tolerance) {
                         document.body.setAttribute("data-drag-detector-effect", "right");
                     }
-                    if (xs - e.screenX > tolerance) {
+                    if (self.xs - e.screenX > self.tolerance) {
                         document.body.setAttribute("data-drag-detector-effect", "left");
                     }
                 }
             }
         }
-
-        function tail() {
+        self.blur = function(e) {
+            window.removeEventListener("mousemove", self.mousemove);
+            self.tail();
+        }
+        self.tail = function() {
             document.body.removeAttribute("data-drag-detector-effect");
-            if (Math.abs(xe - xs) < Math.abs(ye - ys)) {
-                if (ye - ys > tolerance) {
-                    this.dispatchEvent(new CustomEvent("down", { detail: { distance: ye - ys } }));
+            if (Math.abs(self.xe - self.xs) < Math.abs(self.ye - self.ys)) {
+                if (self.ye - self.ys > self.tolerance) {
+                    self.dispatchEvent(new CustomEvent("down", { detail: { distance: self.ye - self.ys } }));
                 }
-                if (ys - ye > tolerance) {
-                    this.dispatchEvent(new CustomEvent("up", { detail: { distance: ys - ye } }));
+                if (self.ys - self.ye > self.tolerance) {
+                    self.dispatchEvent(new CustomEvent("up", { detail: { distance: self.ys - self.ye } }));
                 }
             } else {
-                if (xe - xs > tolerance) {
-                    this.dispatchEvent(new CustomEvent("right", { detail: { distance: xe - xs } }));
+                if (self.xe - self.xs > self.tolerance) {
+                    self.dispatchEvent(new CustomEvent("right", { detail: { distance: self.xe - self.xs } }));
                 }
-                if (xs - xe > tolerance) {
-                    this.dispatchEvent(new CustomEvent("left", { detail: { distance: xs - xe } }));
+                if (self.xs - self.xe > self.tolerance) {
+                    self.dispatchEvent(new CustomEvent("left", { detail: { distance: self.xs - self.xe } }));
                 }
             }
         }
+        window.addEventListener("mousedown", this.mousedown);
+        window.addEventListener("mouseup", this.mouseup);
+        window.addEventListener("blur", this.blur);
+    }
+    disconnectedCallback() {
+        window.removeEventListener("mousedown", this.mousedown);
+        window.removeEventListener("mouseup", this.mouseup);
+        window.removeEventListener("blur", this.blur);
     }
 });
