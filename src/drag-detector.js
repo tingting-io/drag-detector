@@ -11,22 +11,19 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
         let self = this;
         self.mousedown = function(e) {
             e.stopPropagation();
-            e.preventDefault();
             self.xs = e.screenX;
             self.ys = e.screenY;
-            window.addEventListener("mousemove", self.mousemove);
+            window.addEventListener("mousemove", self.mousemove, { passive: true });
         }
         self.mouseup = function(e) {
             e.stopPropagation();
-            e.preventDefault();
             self.xe = e.screenX;
             self.ye = e.screenY;
-            window.removeEventListener("mousemove", self.mousemove);
+            window.removeEventListener("mousemove", self.mousemove, { passive: true });
             self.tail();
         }
         self.mousemove = function(e) {
             e.stopPropagation();
-            e.preventDefault();
             if (e.buttons <= 0) {
                 window.dispatchEvent(new Event("mouseup"));
             } else {
@@ -49,8 +46,7 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
         }
         self.blur = function(e) {
             e.stopPropagation();
-            e.preventDefault();
-            window.removeEventListener("mousemove", self.mousemove);
+            window.removeEventListener("mousemove", self.mousemove, { passive: true });
             self.tail();
         }
         self.tail = function() {
@@ -71,13 +67,13 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
                 }
             }
         }
-        window.addEventListener("mousedown", this.mousedown);
-        window.addEventListener("mouseup", this.mouseup);
-        window.addEventListener("blur", this.blur);
+        window.addEventListener("mousedown", this.mousedown, { passive: true });
+        window.addEventListener("mouseup", this.mouseup, { passive: true });
+        window.addEventListener("blur", this.blur, { passive: true });
     }
     disconnectedCallback() {
-        window.removeEventListener("mousedown", this.mousedown);
-        window.removeEventListener("mouseup", this.mouseup);
-        window.removeEventListener("blur", this.blur);
+        window.removeEventListener("mousedown", this.mousedown, { passive: true });
+        window.removeEventListener("mouseup", this.mouseup, { passive: true });
+        window.removeEventListener("blur", this.blur, { passive: true });
     }
 });
