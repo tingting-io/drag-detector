@@ -1,78 +1,70 @@
 window.customElements.define('drag-panel', class extends window.HTMLElement {
     constructor() {
         super();
-        this.xs = 0;
-        this.ys = 0;
-        this.xe = 0;
-        this.ye = 0;
+        this.originX = 0;
+        this.originY = 0;
         this.tolerance = parseFloat(this.getAttribute("data-tolerance")) || 10;
     }
     connectedCallback() {
-        let self = this;
-        self.mousedown = function(e) {
-            e.stopPropagation();
-            self.xs = e.screenX;
-            self.ys = e.screenY;
-        }
-        self.mouseup = function(e) {
-            e.stopPropagation();
-            self.xe = e.screenX;
-            self.ye = e.screenY;
-            self.tail();
-        }
-        self.mousemove = function(e) {
-            e.stopPropagation();
-            if (e.buttons > 0) {
-                if (Math.abs(e.screenX - self.xs) < Math.abs(e.screenY - self.ys)) {
-                    if (e.screenY - self.ys > self.tolerance) {
-                        document.body.setAttribute("data-drag-panel-effect", "down");
-                    }
-                    if (self.ys - e.screenY > self.tolerance) {
-                        document.body.setAttribute("data-drag-panel-effect", "up");
-                    }
-                } else {
-                    if (e.screenX - self.xs > self.tolerance) {
-                        document.body.setAttribute("data-drag-panel-effect", "right");
-                    }
-                    if (self.xs - e.screenX > self.tolerance) {
-                        document.body.setAttribute("data-drag-panel-effect", "left");
-                    }
-                }
-            } else {
-                document.body.removeAttribute("data-drag-panel-effect");
-            }
-        }
-        self.blur = function(e) {
-            e.stopPropagation();
-            self.tail();
-        }
-        self.tail = function() {
-            document.body.removeAttribute("data-drag-panel-effect");
-            if (Math.abs(self.xe - self.xs) < Math.abs(self.ye - self.ys)) {
-                if (self.ye - self.ys > self.tolerance) {
-                    self.dispatchEvent(new CustomEvent("down", { detail: { distance: self.ye - self.ys } }));
-                }
-                if (self.ys - self.ye > self.tolerance) {
-                    self.dispatchEvent(new CustomEvent("up", { detail: { distance: self.ys - self.ye } }));
-                }
-            } else {
-                if (self.xe - self.xs > self.tolerance) {
-                    self.dispatchEvent(new CustomEvent("right", { detail: { distance: self.xe - self.xs } }));
-                }
-                if (self.xs - self.xe > self.tolerance) {
-                    self.dispatchEvent(new CustomEvent("left", { detail: { distance: self.xs - self.xe } }));
-                }
-            }
-        }
-        window.addEventListener("mousedown", this.mousedown, { passive: true });
-        window.addEventListener("mouseup", this.mouseup, { passive: true });
-        window.addEventListener("mousemove", this.mousemove, { passive: true });
-        window.addEventListener("blur", this.blur, { passive: true });
+        this.addEventListener("mousedown", this.mousedown, { passive: true });
+        this.addEventListener("mouseup", this.mouseup, { passive: true });
+        this.addEventListener("mousemove", this.mousemove, { passive: true });
     }
     disconnectedCallback() {
-        window.removeEventListener("mousedown", this.mousedown, { passive: true });
-        window.removeEventListener("mouseup", this.mouseup, { passive: true });
-        window.removeEventListener("mousemove", this.mousemove, { passive: true });
-        window.removeEventListener("blur", this.blur, { passive: true });
+        this.removeEventListener("mousedown", this.mousedown, { passive: true });
+        this.removeEventListener("mouseup", this.mouseup, { passive: true });
+        this.removeEventListener("mousemove", this.mousemove, { passive: true });
+    }
+    mousedown(e) {
+        e.stopPropagation();
+        this.originX = e.screenX;
+        this.originY = e.screenY;
+    }
+    mouseup(e) {
+        e.stopPropagation();
+        this.tail(e);
+    }
+    mousemove(e) {
+        e.stopPropagation();
+        let buttonDown = e.buttons > 0;
+        let xNow = Math.abs(e.screenX - this.originX) >= Math.abs(e.screenY - this.originY);
+        let rangeDown = e.screenY - this.originY > this.tolerance;
+        let rangeUp = this.originY - e.screenY > this.tolerance;
+        let rangeRight = e.screenX - this.originX > this.tolerance;
+        let rangeLeft = this.originX - e.screenX > this.tolerance;
+        switch (true) {
+            case buttonDown && xNow && rangeLeft && this.getAttribute("data-direction").indexOf("left") > -1:
+                this.setAttribute("data-effect", "left");
+                break;
+            case buttonDown && xNow && rangeRight && this.getAttribute("data-direction").indexOf("right") > -1:
+                this.setAttribute("data-effect", "right");
+                break;
+            case buttonDown && !xNow && rangeUp && this.getAttribute("data-direction").indexOf("up") > -1:
+                this.setAttribute("data-effect", "up");
+                break;
+            case buttonDown && !xNow && rangeDown && this.getAttribute("data-direction").indexOf("down") > -1:
+                this.setAttribute("data-effect", "down");
+                break;
+            default:
+                this.removeAttribute("data-effect");
+                break;
+        }
+    }
+    tail(e) {
+        switch (this.getAttribute("data-effect")) {
+            case "up":
+                this.dispatchEvent(new CustomEvent("up", { detail: { distance: this.originY - e.screenY } }));
+                break;
+            case "down":
+                this.dispatchEvent(new CustomEvent("down", { detail: { distance: e.screenY - this.originY } }));
+                break;
+            case "left":
+                this.dispatchEvent(new CustomEvent("left", { detail: { distance: this.originX - e.screenX } }));
+                break;
+            case "right":
+                this.dispatchEvent(new CustomEvent("right", { detail: { distance: e.screenX - this.originX } }));
+                break;
+        }
+        this.removeAttribute("data-effect");
     }
 });

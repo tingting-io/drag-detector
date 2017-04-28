@@ -1,5 +1,7 @@
 {
     "name": "drag-panel",
+    "main": "drag-panel.html",
+    "version": "1.0.0",
     "description": "",
     "license": "MIT",
     "keywords": ["drag", "web-components"],
