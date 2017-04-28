@@ -22,7 +22,7 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
         }
         self.mousemove = function(e) {
             e.stopPropagation();
-            if (e.buttons >= 0) {
+            if (e.buttons > 0) {
                 if (Math.abs(e.screenX - self.xs) < Math.abs(e.screenY - self.ys)) {
                     if (e.screenY - self.ys > self.tolerance) {
                         document.body.setAttribute("data-drag-detector-effect", "down");
@@ -38,6 +38,8 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
                         document.body.setAttribute("data-drag-detector-effect", "left");
                     }
                 }
+            } else {
+                document.body.removeAttribute("data-drag-detector-effect");
             }
         }
         self.blur = function(e) {
