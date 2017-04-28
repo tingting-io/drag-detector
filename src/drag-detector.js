@@ -13,20 +13,16 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
             e.stopPropagation();
             self.xs = e.screenX;
             self.ys = e.screenY;
-            window.addEventListener("mousemove", self.mousemove, { passive: true });
         }
         self.mouseup = function(e) {
             e.stopPropagation();
             self.xe = e.screenX;
             self.ye = e.screenY;
-            window.removeEventListener("mousemove", self.mousemove, { passive: true });
             self.tail();
         }
         self.mousemove = function(e) {
             e.stopPropagation();
-            if (e.buttons <= 0) {
-                window.dispatchEvent(new Event("mouseup"));
-            } else {
+            if (e.buttons >= 0) {
                 if (Math.abs(e.screenX - self.xs) < Math.abs(e.screenY - self.ys)) {
                     if (e.screenY - self.ys > self.tolerance) {
                         document.body.setAttribute("data-drag-detector-effect", "down");
@@ -46,7 +42,6 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
         }
         self.blur = function(e) {
             e.stopPropagation();
-            window.removeEventListener("mousemove", self.mousemove, { passive: true });
             self.tail();
         }
         self.tail = function() {
@@ -69,11 +64,13 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
         }
         window.addEventListener("mousedown", this.mousedown, { passive: true });
         window.addEventListener("mouseup", this.mouseup, { passive: true });
+        window.addEventListener("mousemove", this.mousemove, { passive: true });
         window.addEventListener("blur", this.blur, { passive: true });
     }
     disconnectedCallback() {
         window.removeEventListener("mousedown", this.mousedown, { passive: true });
         window.removeEventListener("mouseup", this.mouseup, { passive: true });
+        window.removeEventListener("mousemove", this.mousemove, { passive: true });
         window.removeEventListener("blur", this.blur, { passive: true });
     }
 });
