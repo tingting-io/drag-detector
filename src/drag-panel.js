@@ -1,4 +1,4 @@
-window.customElements.define('drag-detector', class extends window.HTMLElement {
+window.customElements.define('drag-panel', class extends window.HTMLElement {
     constructor() {
         super();
         this.xs = 0;
@@ -25,21 +25,21 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
             if (e.buttons > 0) {
                 if (Math.abs(e.screenX - self.xs) < Math.abs(e.screenY - self.ys)) {
                     if (e.screenY - self.ys > self.tolerance) {
-                        document.body.setAttribute("data-drag-detector-effect", "down");
+                        document.body.setAttribute("data-drag-panel-effect", "down");
                     }
                     if (self.ys - e.screenY > self.tolerance) {
-                        document.body.setAttribute("data-drag-detector-effect", "up");
+                        document.body.setAttribute("data-drag-panel-effect", "up");
                     }
                 } else {
                     if (e.screenX - self.xs > self.tolerance) {
-                        document.body.setAttribute("data-drag-detector-effect", "right");
+                        document.body.setAttribute("data-drag-panel-effect", "right");
                     }
                     if (self.xs - e.screenX > self.tolerance) {
-                        document.body.setAttribute("data-drag-detector-effect", "left");
+                        document.body.setAttribute("data-drag-panel-effect", "left");
                     }
                 }
             } else {
-                document.body.removeAttribute("data-drag-detector-effect");
+                document.body.removeAttribute("data-drag-panel-effect");
             }
         }
         self.blur = function(e) {
@@ -47,7 +47,7 @@ window.customElements.define('drag-detector', class extends window.HTMLElement {
             self.tail();
         }
         self.tail = function() {
-            document.body.removeAttribute("data-drag-detector-effect");
+            document.body.removeAttribute("data-drag-panel-effect");
             if (Math.abs(self.xe - self.xs) < Math.abs(self.ye - self.ys)) {
                 if (self.ye - self.ys > self.tolerance) {
                     self.dispatchEvent(new CustomEvent("down", { detail: { distance: self.ye - self.ys } }));

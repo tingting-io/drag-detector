@@ -1,0 +1,28 @@
+drag-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+drag-panel[data-drag-panel-effect] {
+    opacity: 0.5;
+}
+
+drag-panel[data-drag-panel-effect="right"] {
+    transform: translateX(5vw);
+}
+
+drag-panel[data-drag-panel-effect="left"] {
+    transform: translateX(-5vw);
+}
+
+drag-panel[data-drag-panel-effect="up"] {
+    transform: translateY(-5vh);
+}
+
+drag-panel[data-drag-panel-effect="down"] {
+    transform: translateY(5vh);
+}

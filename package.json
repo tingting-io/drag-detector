@@ -1,7 +1,7 @@
 {
-    "name": "drag-detector",
+    "name": "drag-panel",
     "description": "",
     "license": "MIT",
     "keywords": ["drag", "web-components"],
-    "homepage": "https://github.com/tingting-io/drag-detector"
+    "homepage": "https://github.com/tingting-io/drag-panel"
 }
