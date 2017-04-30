@@ -5,6 +5,7 @@ drag-panel {
     right: 0;
     bottom: 0;
     transition: transform 0.2s, opacity 0.2s;
+    z-index: 1;
 }
 
 drag-panel[data-effect] {
