@@ -27,3 +27,12 @@ drag-panel[data-effect="up"] {
 drag-panel[data-effect="down"] {
     transform: translateY(5vh);
 }
+
+@media (max-width: 600px) {
+    drag-panel {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+}

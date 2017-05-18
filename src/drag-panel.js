@@ -9,16 +9,22 @@ window.customElements.define('drag-panel', class extends window.HTMLElement {
         this.addEventListener("mousedown", this.mousedown, { passive: true });
         this.addEventListener("mouseup", this.mouseup, { passive: true });
         this.addEventListener("mousemove", this.mousemove, { passive: true });
+        this.addEventListener("touchstart", this.mousedown, { passive: true });
+        this.addEventListener("touchend", this.mouseup, { passive: true });
+        this.addEventListener("touchmove", this.mousemove, { passive: true });
     }
     disconnectedCallback() {
         this.removeEventListener("mousedown", this.mousedown, { passive: true });
         this.removeEventListener("mouseup", this.mouseup, { passive: true });
         this.removeEventListener("mousemove", this.mousemove, { passive: true });
+        this.removeEventListener("touchstart", this.mousedown, { passive: true });
+        this.removeEventListener("touchend", this.mouseup, { passive: true });
+        this.removeEventListener("touchmove", this.mousemove, { passive: true });
     }
     mousedown(e) {
         e.stopPropagation();
-        this.originX = e.screenX;
-        this.originY = e.screenY;
+        this.originX = e.screenX || e.touches[0].screenX;
+        this.originY = e.screenY || e.touches[0].screenY;
     }
     mouseup(e) {
         e.stopPropagation();
@@ -26,7 +32,9 @@ window.customElements.define('drag-panel', class extends window.HTMLElement {
     }
     mousemove(e) {
         e.stopPropagation();
-        let buttonDown = e.buttons > 0;
+        e.screenX = e.screenX || e.touches[0].screenX;
+        e.screenY = e.screenY || e.touches[0].screenY;
+        let buttonDown = e.buttons > 0 || e.touches;
         let xNow = Math.abs(e.screenX - this.originX) >= Math.abs(e.screenY - this.originY);
         let rangeDown = e.screenY - this.originY > this.tolerance;
         let rangeUp = this.originY - e.screenY > this.tolerance;
