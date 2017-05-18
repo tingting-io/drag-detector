@@ -32,14 +32,14 @@ window.customElements.define('drag-panel', class extends window.HTMLElement {
     }
     mousemove(e) {
         e.stopPropagation();
-        e.screenX = e.screenX || e.touches[0].screenX;
-        e.screenY = e.screenY || e.touches[0].screenY;
+        let screenX = e.screenX || e.touches[0].screenX;
+        let screenY = e.screenY || e.touches[0].screenY;
         let buttonDown = e.buttons > 0 || e.touches;
-        let xNow = Math.abs(e.screenX - this.originX) >= Math.abs(e.screenY - this.originY);
-        let rangeDown = e.screenY - this.originY > this.tolerance;
-        let rangeUp = this.originY - e.screenY > this.tolerance;
-        let rangeRight = e.screenX - this.originX > this.tolerance;
-        let rangeLeft = this.originX - e.screenX > this.tolerance;
+        let xNow = Math.abs(screenX - this.originX) >= Math.abs(screenY - this.originY);
+        let rangeDown = screenY - this.originY > this.tolerance;
+        let rangeUp = this.originY - screenY > this.tolerance;
+        let rangeRight = screenX - this.originX > this.tolerance;
+        let rangeLeft = this.originX - screenX > this.tolerance;
         switch (true) {
             case buttonDown && xNow && rangeLeft && this.getAttribute("data-direction").indexOf("left") > -1:
                 this.setAttribute("data-effect", "left");
@@ -61,16 +61,16 @@ window.customElements.define('drag-panel', class extends window.HTMLElement {
     tail(e) {
         switch (this.getAttribute("data-effect")) {
             case "up":
-                this.dispatchEvent(new CustomEvent("up", { detail: { distance: this.originY - e.screenY } }));
+                this.dispatchEvent(new CustomEvent("up", { detail: { distance: this.originY - screenY } }));
                 break;
             case "down":
-                this.dispatchEvent(new CustomEvent("down", { detail: { distance: e.screenY - this.originY } }));
+                this.dispatchEvent(new CustomEvent("down", { detail: { distance: screenY - this.originY } }));
                 break;
             case "left":
-                this.dispatchEvent(new CustomEvent("left", { detail: { distance: this.originX - e.screenX } }));
+                this.dispatchEvent(new CustomEvent("left", { detail: { distance: this.originX - screenX } }));
                 break;
             case "right":
-                this.dispatchEvent(new CustomEvent("right", { detail: { distance: e.screenX - this.originX } }));
+                this.dispatchEvent(new CustomEvent("right", { detail: { distance: screenX - this.originX } }));
                 break;
         }
         this.removeAttribute("data-effect");
