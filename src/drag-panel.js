@@ -23,8 +23,8 @@ window.customElements.define('drag-panel', class extends window.HTMLElement {
     }
     mousedown(e) {
         e.stopPropagation();
-        this.originX = e.screenX || e.touches ? e.touches[0].screenX : 0;
-        this.originY = e.screenY || e.touches ? e.touches[0].screenY : 0;
+        this.originX = e.screenX || (e.touches ? e.touches[0].screenX : 0);
+        this.originY = e.screenY || (e.touches ? e.touches[0].screenY : 0);
     }
     mouseup(e) {
         e.stopPropagation();
@@ -32,8 +32,8 @@ window.customElements.define('drag-panel', class extends window.HTMLElement {
     }
     mousemove(e) {
         e.stopPropagation();
-        let screenX = e.screenX || e.touches ? e.touches[0].screenX : 0;
-        let screenY = e.screenY || e.touches ? e.touches[0].screenY : 0;
+        let screenX = e.screenX || (e.touches ? e.touches[0].screenX : 0);
+        let screenY = e.screenY || (e.touches ? e.touches[0].screenY : 0);
         let buttonDown = e.buttons > 0 || e.touches;
         let xNow = Math.abs(screenX - this.originX) >= Math.abs(screenY - this.originY);
         let rangeDown = screenY - this.originY > this.tolerance;
