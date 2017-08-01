@@ -1,9 +1,17 @@
 {
     "name": "drag-panel",
-    "main": "drag-panel.html",
     "version": "1.0.0",
     "description": "",
     "license": "MIT",
     "keywords": ["drag", "web-components"],
-    "homepage": "https://github.com/tingting-io/drag-panel"
+    "homepage": "https://github.com/tingting-io/drag-panel",
+    "flat": true,
+    "scripts": {
+        "init": "npm run init:uglify-es && npm run init:uglifycss",
+        "init:uglify-es": "npm install uglify-es -g",
+        "init:uglifycss": "npm install uglifycss -g",
+        "build": "npm run build:uglify-es && npm run build:uglifycss",
+        "build:uglify-es": "uglifyjs src/drag-panel.js -c -m -o min/drag-panel.js",
+        "build:uglifycss": "uglifycss src/drag-panel.css --output min/drag-panel.css"
+    }
 }
